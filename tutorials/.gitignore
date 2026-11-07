@@ -1,0 +1,6 @@
+*logs
+*.pkl
+.storage/
+data/*
+traces/*
+developer_notes/

@@ -1,0 +1,42 @@
+.venv
+.vscode
+.DS_Store
+.env
+test_llamaindex.py
+outputs.txt
+core/__pycache__
+adalflow/__pycache__
+components/*/__pycache__
+components/__pycache__
+use_cases/__pycache__
+*/__pycache__
+dist/
+lib/
+__pycache__/
+# docs/source/
+docs/build/
+docs/_build/
+# docs/source/_templates
+docs/source/documents/
+# docs/source/apis/*
+.mypy_cache/
+.pytest_cache/
+local_cache/
+/*.txt
+*.pth
+*.log
+storage/
+*.pkl
+# /*.png
+/*.dot
+/*.csv
+index.faiss
+*.json
+# ignore the softlink to adalflow cache
+*.adalflow
+.idea
+extend/
+logs/
+mlruns/
+mlartifacts/
+logs/

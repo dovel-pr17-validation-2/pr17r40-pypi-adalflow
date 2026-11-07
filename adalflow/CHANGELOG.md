@@ -1,0 +1,465 @@
+
+## [1.1.3] - 2025-01-21
+
+### Added
+
+#### Output Parsers (`adalflow/components/output_parsers/`)
+- **JsonOutputParserPydanticModel**: New JSON output parser supporting Pydantic BaseModel classes
+  - Native Pydantic schema generation and validation
+  - Support for nested models and complex data structures
+  - Optional return of Pydantic objects or dictionaries
+  - Example-based instruction generation
+  - Comprehensive validation error handling
+
+#### TGD Optimizer (`adalflow/optim/text_grad/tgd_optimizer.py`)
+- **CustomizedXMLParser**: New XML parser for TGD optimizer output
+  - Supports reasoning, method, and proposed_variable fields
+  - Robust XML parsing with error handling
+  - Direct TGDData object creation
+
+### Improved
+
+#### JSON Output Format Instructions
+- **Enhanced schema interpretation guidance**: Added comprehensive instructions for proper JSON schema handling
+- **Critical formatting requirements**: Detailed JSON formatting rules with proper escaping
+- **Complex content handling**: Better support for special characters, nested quotes, and multiline content
+- **Validation checklist**: Step-by-step validation requirements for JSON output
+- **Warning system**: Clear warnings about JSON parsing failures
+
+#### DataClass Parser (`adalflow/components/output_parsers/dataclass_parser.py`)
+- Updated JSON output format with improved schema interpretation instructions
+- Better guidance for handling complex text with special characters
+- Enhanced validation requirements for JSON parsers
+
+#### OpenAI Client (`adalflow/components/model_client/openai_client.py`)
+- **Logging optimization**: Changed usage tracking warnings to debug level for cleaner logs
+- Reduced noise in logs for generator/iterator completion types
+
+#### JsonOutputParser (`adalflow/components/output_parsers/outputs.py`)
+- **Default format type change**: Now uses DataClassFormatType.SCHEMA by default instead of SIGNATURE_JSON
+- Enhanced format instructions with comprehensive JSON formatting requirements
+- Better error handling and validation guidance
+
+### Tests
+- **Comprehensive Pydantic parser tests**: Added extensive test coverage for JsonOutputParserPydanticModel
+  - Basic functionality and validation tests
+  - Complex nested model parsing tests  
+  - Schema generation and format instruction tests
+  - Error handling and edge case tests
+  - JSON with markdown wrapper tests
+
+### Dependencies
+- Added Pydantic dependency support for new JsonOutputParserPydanticModel
+- Enhanced XML parsing capabilities with xml.etree.ElementTree
+
+## [1.1.2] - 2025-08-16
+
+### Improved
+
+#### Runner (`adalflow/components/agent/runner.py`)
+- Restructured `call()`, `acall()`, `astream()` for better generator processing performance
+- Fixed error handling for unrecoverable errors with proper recovery logic
+- Improved async generator consumption without blocking event loops
+- Removed debug print statements
+
+#### FunctionTool (`adalflow/core/func_tool.py`)
+- Added `FunctionType` enum (SYNC, ASYNC, SYNC_GENERATOR, ASYNC_GENERATOR)
+- Added `detect_function_type()` class method for accurate type detection
+- Fixed generator functions to return generator objects instead of consuming them
+- Cleaned up commented legacy code
+
+#### ToolManager (`adalflow/core/tool_manager.py`)
+- Updated `execute_func()` and `execute_func_async()` for proper generator handling
+- Enhanced error propagation in async contexts
+
+### Fixed
+- Fixed memory handling to check `_pending_user_query` before adding assistant response
+- Fixed async generator handling in sync contexts to avoid event loop blocking
+
+### Tests
+- Added comprehensive runner tests (`adalflow/tests/test_runner.py`)
+- Added generator function tests (`adalflow/tests/test_tool.py`)
+
+## [1.1.1] - 2025-08-11
+
+### Added
+
+#### Model Client Enhancements
+- **OpenAI Client**:
+  - Full multimodal support for vision models (GPT-4o, GPT-4o-mini, O1, O1-mini)
+  - Image generation capabilities via DALL-E integration (both legacy and new tools API)
+  - Support for local images, URLs, and base64 encoded images
+  - Reasoning model support (O1, O3) with effort configuration
+  - Migrated to Response API for better feature support
+  - Comprehensive streaming support for both sync and async operations
+
+- **Ollama Client**:
+  - Enhanced streaming support with proper async/sync handling
+  - Chat API support alongside existing Generate API
+  - GPT-OSS model integration for local reasoning capabilities
+  - Improved error handling and connection management
+  - Support for thinking/reasoning output extraction
+
+#### Core Features
+- **GeneratorOutput**:
+  - Added `save_images()` method for automatic image saving with format conversion
+  - Support for multiple image formats (PNG, JPG, JPEG, WEBP, GIF, BMP)
+  - Added `images` field for multimodal responses
+  - Enhanced streaming response handling
+
+- **Memory (ConversationMemory)**:
+  - Added `clear()` method for memory management
+  - Improved prompt rendering for chat history
+  - Better handling of nested prompts
+
+#### Documentation & Examples
+- Comprehensive Ollama integration guide with tutorials
+- OpenAI integration documentation with multimodal examples
+- New notebooks: `ollama_models.ipynb`, `openai_integration.ipynb`
+- Tutorial scripts for both Ollama and OpenAI in `tutorials/models/`
+- Multimodal integration tutorial
+
+### Improved
+
+#### Runner & Agent
+- **Runner**:
+  - Enhanced error handling for `acall()`, `call()`, and streaming operations
+  - Added cancellation logic for better control flow
+  - Refactored `astream()` to reduce code redundancy
+  - Improved generator input handling
+  - Better error propagation and debugging information
+
+- **Agent**:
+  - More robust error handling and recovery
+  - Updated prompts for better clarity
+  - Fixed nested prompt support issues
+  - Improved JSON output formatting and parsing
+
+#### Output Parsing
+- JSON output parser now automatically handles JSON wrapped in markdown code blocks
+- Better handling of malformed JSON responses
+- Improved error messages for parsing failures
+
+#### Testing
+- Comprehensive tests for image saving functionality
+- Enhanced Ollama client tests with streaming support
+- Expanded OpenAI client tests for multimodal features
+- Memory component tests for new functionality
+- Runner tests for error handling scenarios
+
+### Fixed
+- Fixed nested prompt support by removing parentheses in agent task descriptions
+- Resolved streaming response handling issues in async contexts
+- Fixed memory rendering issues with complex conversation histories
+- Corrected JSON output parser for various edge cases
+- Fixed connection handling in Ollama client
+
+### Dependencies
+- Updated project dependencies for better compatibility
+- Added support for latest OpenAI SDK features
+
+## [1.0.5] - Release Date TBD
+
+# Added
+
+-  `Runner` v1 runner to be able to do sync/async agent call.
+-  `Agent` v1 agent contains the planner, tools to collaborate with the Runner.
+-  Tracing of the whole agent, especially with ML flow.
+
+### Fixed
+- `LocalDB` fixed with keyword arguments.
+
+### Improved
+- `React` agent:
+  - allow `answer` to be customized to any data type and even `DataClass` via `answer_data_type`.
+  - allow `role_desc` to be customized to any use case.
+  - allow `is_thinking_model` so that we can better support thinking model such as `claude-sonnet-4-20250514` for better performance.
+
+- `AnthropicAPIClient`, `SambaNovaClient`
+  - added `handle_streaming_response` to support streaming response.
+  - Enabled the parsing to `LLMResponse` and extract it to GeneratorOutput.
+
+- `Generator`
+  - added `model_type` to support `LLM_REASONING`.
+  - inside of `GeneratorOutput`, support `api_response` so that the whole api_response is saved besides of the `raw_response` which is mainly text message.
+  - inside of `GeneratorOutput`, support `thinking` and `tool_user`(`Function` type)
+- `ToolManager` and `FunctionTool`
+  - added `is_async_generator` property in `FunctionTool` to support streaming output
+
+- `Memory`
+  - renamed to `ConversationMemory`.
+  - added `add_user_query` and `add_assistant_response` to support adding user query and assistant response separately.
+  - improved the render of the string to be pass as chat history to the LLM.
+
+### Deleted
+- `FuncComponent` and `func_to_component` decorator.
+
+## [1.0.4] - 2025-02-13
+
+### Modified
+- `Embedder` and `BatchEmbedder` changed to `DataComponent`.
+- Add `GSM8K` dataset.
+
+### model_client (added)
+- `list_models` method.
+## [1.0.2] - 2025-02-02
+### Added
+- Added `TogetherClient` to support the Together API.
+
+### Modified
+- `OpenAIClient` to is adapted to support other model clients that are highly similar.
+
+## [1.0.0.beta.1] - 2025-01-28
+Updates mainly follow our first arxiv paper: [Auto-Differentiating Any LLM Workflow: A Farewell to Manual Prompting](https://arxiv.org/abs/2501.16673)
+
+### Core Updates
+
+#### ReAct Agent
+- Added trainable task descriptions and docstrings
+- Implemented `FunctionExpression` to `Function` conversion in planner responses
+- Introduced `context_variables` for storage
+- Added debug controls for output granularity
+- Updated `__call__` to use `bicall` when available (dual train/eval modes)
+
+#### Parser
+- Migrated all parsers from `Component` to `DataComponent`.
+
+#### Component
+- Added `forward` and `bicall` methods
+- Added `DataComponent` base class for non-trainable components.
+- Added `func_to_data_component` decorator
+- Modified the `fun_to_component` decorator to `func_to_component`, `FunComponent` to `FuncComponent`.
+- Introduced `GradComponent` base class for unit grad components that hands computation graph predecessors. Considering it a unit.
+- Added `fun_to_grad_component` decorator
+
+#### Generator
+- Integrated `BackwardPassSetup` into generator
+- New engine features:
+  - `disable_backward_engine` flag
+  - `update_default_backward_pass_setup`
+  - `_backward_through_all_predecessors`
+- Added dedicated `BackwardEngine` class
+
+#### Parameter
+- Split into `Parameter` + `OutputParameter`
+- Added tracking for:
+  - `data_id` in training sets
+  - `data_in_prompt` callable
+  - `get_prompt_data()` method
+- New visualization tools:
+  - `draw_output_graph`
+  - `draw_component_subgraph`
+  - `draw_interactive_html_graph`
+
+#### Training
+- Added `LossComponent` for dedicated training mode
+- Enhanced `tgd_optimizer` with:
+  - `add_failed_proposal` (CH paper implementation)
+  - One-parameter-at-a-time optimization
+  - Improved prompt engineering for system awareness
+- Updated `adal` with:
+  - `loss_eval_fn` support
+  - Auto-discovery of `GradComponent`.
+  - Added `BackwardPassSetup` configuation
+
+#### Evaluation
+- Updated `RetrieverEvaluator` (formerly `RetrieverRecall`) with precision/recall
+- Enhanced `AnswerMatchAcc` with:
+  - `ExactMatch` from HotpotQA
+  - `F1_score` implementation
+
+#### Tooling & Utilities
+- Parser: inherited `DataComponent` for all parsers instead of `Component`
+- Revamped `tool_manager` with:
+  - `CallFunctionTool` component
+  - `FunctionExpressionToFunction` converter
+- Updated `DataLoader` with seed support
+- Improved `Prompt` system:
+  - Converted to dataclass
+  - Added list-to-string conversion in `prompt_kwargs`
+
+## [0.2.7] - 2025-01-16
+
+### Added
+- `Memory` is completed with `call` and `add_dialog_turn` methods.
+- Integrated `LanceDB` in the `Retriever`
+- Multi-modal (image input and generation) in `OpenAIClient` along with tests.
+- `ComponentList` to support a list of components registered in a component. Added `test_componentlist` to test the `ComponentList`.
+
+### Improved
+- Better diagnose report for `Trainer.diagnose`.
+- `BedrockAPIClient` added more details on setup, yet it is still in experimental stage.
+- `AzureAPIClient` added more details on setup, yet it is still in experimental stage.
+-  `Retriever` class:
+  - Support data id (field).
+- `GradComponent`: Support pass-through gradient for the `forward` method.
+
+Optimization
+- Aggregated all backward engine prompts in `backward_engine_prompt`.
+- Added `TGDData` for the optimizer to support reasoning at proposing new prompt.
+- Added `sequential_order` in the `Trainer` to support the sequential training order. Reorganized the trainer code.
+## [0.2.6] - 2024-11-25
+### Improved
+- Add default `max_tokens=512` to the `AnthropicAPIClient` to avoid the error when the user does not provide the `max_tokens` in the prompt.
+
+## [0.2.5] - 2024-10-28
+
+### Fixed
+- `DataClassParser` nested data class parsing where we have to use `from_dict(json_dict)` instead of `(**json_dict)` to parse the nested data class.
+
+## [0.2.4] - 2024-10-27
+
+### Added
+- `BedrockAPIClient` to support the AWS Bedrock API. Note: still need more testing and documentation.
+
+### Fixed
+- `Generator` cache path: fixed the issue with invalid window path with incompaticle special characters: https://github.com/SylphAI-Inc/AdalFlow/issues/237
+- Wrong score in the diagnose file as `prepare_eval` is not passing classification label 0 to the `eval_input`.
+
+
+## [0.2.3] - 2024-09-20
+
+### Rename
+- three methods within `AdalComponent` are renamed:
+  - `handle_one_loss_sample` to `prepre_loss`
+  - `handle_one_task_sample` to `prepre_task`
+  - `evaluate_one_sample` to `prepre_eval`
+
+## [0.2.3.beta.1] - 2024-09-17
+### Removed
+- Removed /reasoning as COT is just too simple to be a separate module.
+### Fixed
+- datasets/hotpotqa.py
+- eval/answer_match_acc: added lower() to both the gt and pred in the fuzzy match. On hotpotqa, the accuracy goes from 0.15 to 0.4 on one test.
+- eval/functional: fixed the `confidence_interval` to be able to customize the confidence level.
+
+### Added
+Auto-grad system to support retriever and any component:
+- `GradComponent` has a default `forward` which wraps the `call` to handle the auto-grad automatically for any component that has subclassed `GradComponent`.
+- Clarified the `ParamType` to include `input`, `output`, `hyperparam` instead of following PyTorch's tensor and Parameter design pattern.
+- `TraceGraph` of the `Parameter` at `draw_graph` to support `ParamType`.
+## [0.2.2] - 2024-09-09
+### Added
+- `get_cache_path`, instead of print out the cache path all the time, we add a ``get_cache_path`` to get the cache path.
+- Make `huggingface datasets` as an optional dependency.
+- Eval: `G_eval` to evaluate llm applications that have no reference text.
+### Modified
+- Add `template` to let users pass their own template, but need to have the same arguments as the default template.
+- Added `checkpoint resume` in the `Trainer.diagnose` to show the newest performance and diagnostics on the checkpoint.
+
+## [0.2.0] - 2024-08-20
+### Added
+- Qdrant retriever.
+
+### Improved
+- Add "mixed" training in ``Trainer`` to do demo and text optimization both in each step.
+- ``DemoOptimizer``, allow to config if the input fields are included or excluded in the demonstration.
+-  Added ``sequential`` and ``mix`` in the ``optimization_order`` in the ``Trainer`` to support the mixed training.
+-  Added ``resume_from_ckpt`` in the ``Trainer.fit``.
+
+### Fixed Bug
+- wrong import in ``react`` agent.
+## [0.2.0.beta.3] - 2024-08-16
+### Fixed
+- missing `diskcache` package in the dependencies.
+
+## [0.2.0.beta.2] - 2024-08-15
+### Improved
+- ``Demo Optimizer`` with "learn-to-reason" one shot to achieve 94% on the object count, close to the 98% by the teacher gpt-4o model.
+
+## [0.2.0.beta.1] - 2024-08-14
+### Added
+- Optimizer: `paramter`, `GradComponent`, `Optimizer`, `AdalComponent`, and `Trainer`.
+
+### Added features
+1.  ``DataClass``
+* support ``__input_fields__``, ``get_input_fields``, ``set_input_fields__``, along with the output version.
+* Support ``Parameter`` field which will be converted to `p.data``.
+* Support ``include`` besides of ``exclude``, they cant coexist.
+* ``to_dict`` made sure the ordering of fields is rearranged according to the ``input_fields`` and ``output_fields``.
+
+## [0.1.0-beta.6] - 2024-07-23
+
+Rename the `lightrag` package to `adalflow`.
+
+### Fixed
+
+- We introduced a bug in the previous release, the ollama model client non-streaming call was not working. We fixed it as we cannot put yield and return in the same function.
+
+## [0.1.0-beta.5] - 2024-07-23
+
+### Fixed
+- [issue 134](https://github.com/SylphAI-Inc/AdalFlow/issues/134) Suppport Enum in `DataClass` schema. https://github.com/SylphAI-Inc/AdalFlow/pull/135
+- [issue 154](https://github.com/SylphAI-Inc/AdalFlow/issues/154) Fixed the `DataClass.from_dict` failure on `list[int]` type due to conditional check failure in the functional.
+
+### Added
+- Support streaming in Generator (sync call) [issue 149](https://github.com/SylphAI-Inc/AdalFlow/issues/149)
+- Support streaming in OpenAIClient (sync call)
+
+## [0.1.0-beta.3, 4] - 2024-07-18
+
+### Added
+- Ollama model client v1.
+
+### Fixed
+- func_tool.execute fails to run sync function in jupyter notebook. We avoid calling execute and instead in ToolManager, we
+  add sync and async for each function method and call the `call` and `acall` method of func_tool directly.
+- ModelClient acall bug.
+
+### Improved
+- Add function `extract_function_expression` in `functional`, and it will add missing right parenthesis to the function expression if LLMs fail to do so. This will make function expression more robust.
+
+## [0.1.0-beta.2] - 2024-07-15
+
+### Modified
+- Make `LocalDB` a component for better visualization.
+- Add extra packages in dependencides.
+
+## [0.1.0-beta.1] - 2024-07-15
+
+### Added
+- `Sequential` adds `acall` method.
+- Add extra packages so that users can install them with `pip install adalflow[extra]`.
+
+## [0.0.0-beta.1] - 2024-07-10
+
+### Added
+- `DataClass`: add `__type_var_map__` in `data class schema` as the necessary step to support `Generic` in data class.
+- Support Python `3.9`.
+
+### Fixed
+- `ReAct` agent is fixed to be working with updates on the json output parser.
+- `Add` error handling for using Lazy Import classes the wrong way, such as subclass.
+
+
+
+## [0.0.0-alpha.16] - 2024-07-08
+
+### Fixed
+- Anthropic client message does not use system role. For now, we put the whole prompt as the first user message.
+- Update the `DEDEFAULT_LIGHTRAG_SYSTEM_PROMPT` to include 'You are a helpful assistant' as default <SYS> prompt.
+
+## [0.0.0-alpha.15] - 2024-07-07
+
+### Fixed
+- `JsonOutputParser` and `YamlOutputParser` (1) forget to return the `output_dict` in the call. (2) Improve the output format str to ask it not to mistaken the "properties" and "type" as keys in the json/yaml output.
+- Add test cases for the above fixes.
+
+## [0.0.0-alpha.14] - 2024-07-06
+
+### Modified
+- `Sequential` moved from `lightrag.core.component` to `lightrag.core.container`.
+- `Sequential` now accepts any positional and keyword arguments at the call time (the first component).
+- `get_logger` in `lightrag.utils.logger` is simplified to config the root and named logger. Removed `enable_library_logging`.
+
+### Fixed
+- safe_import in `lightrag.components.model_client` to report import errors.
+## [0.0.0-alpha.13] - 2024-07-04
+
+### Added
+- Added `return_data_class` parameter to `JsonOutputParser` and `YamlOutputParser` to return the data class object instead of the dictionary.
+
+### Fixed
+- Google client safe import.
+- Postgres retriever compilation error.
+- Database dialogTurn model.
